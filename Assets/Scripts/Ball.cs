@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Ball : MonoBehaviour
 {
@@ -14,14 +15,29 @@ public class Ball : MonoBehaviour
     public float maxVelocity = 10f;
 
     int score = 0;
-    int lives = 5;
+    int lives = 3;
+
+    public TextMeshProUGUI scoreText;
+
+    public GameObject[] livesImage;
+
+    Vector2 inicialPos;
+
+    public float forceAmount;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         // El Rigidbody es cinemático
         launched = false;
+
+        
+
+        inicialPos = body.position;
+
     }
+
+    
 
     void Update()
     {
@@ -31,22 +47,23 @@ public class Ball : MonoBehaviour
             if (Input.GetKey(KeyCode.Space))
             {
                 // Lanzamos la bola y cambiamos el estado a 'lanzado'
-                body.position += launchDirection * speed * Time.deltaTime;
+                body.AddForce(Vector2.up * forceAmount, ForceMode2D.Impulse);
                 launched = true;
             }
         }
         else
         {
 
-            // Continuar moviendo la bola en la dirección de lanzamiento
-            body.position += launchDirection * speed * Time.deltaTime;
+            
         }
 
         if(body.position.y < minY)
         {
-            transform.position = Vector3.zero;
+            transform.position = inicialPos;
             body.velocity = Vector3.zero;
             lives--;
+            livesImage[lives].SetActive(false);
+            launched = false;
         }
 
         if (body.velocity.magnitude > maxVelocity)
@@ -61,6 +78,7 @@ public class Ball : MonoBehaviour
         {
             Destroy(collision.gameObject);
             score++;
+            scoreText.text = score.ToString("0000");
         }
 
         
