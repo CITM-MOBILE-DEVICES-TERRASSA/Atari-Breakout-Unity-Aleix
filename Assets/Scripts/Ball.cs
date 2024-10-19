@@ -13,6 +13,9 @@ public class Ball : MonoBehaviour
 
     public float maxVelocity = 10f;
 
+    int score = 0;
+    int lives = 5;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -43,11 +46,23 @@ public class Ball : MonoBehaviour
         {
             transform.position = Vector3.zero;
             body.velocity = Vector3.zero;
+            lives--;
         }
 
         if (body.velocity.magnitude > maxVelocity)
         {
             body.velocity = Vector3.ClampMagnitude(body.velocity, maxVelocity);
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Brick"))
+        {
+            Destroy(collision.gameObject);
+            score++;
+        }
+
+        
     }
 }
