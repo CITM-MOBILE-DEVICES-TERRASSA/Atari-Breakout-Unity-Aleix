@@ -16,7 +16,9 @@ public class Ball : MonoBehaviour
 
     
 
-    int score = 0;
+    public int score = 0;
+
+    
 
     public int lives = 3;
 
@@ -30,7 +32,7 @@ public class Ball : MonoBehaviour
 
     int brickCount;
 
-    public int level = 1;
+    public int level;
 
     private LevelGenerator levelGenerator;
 
@@ -42,7 +44,7 @@ public class Ball : MonoBehaviour
 
         inicialPos = body.position;
 
-        
+        level = 1;
 
     }
 
@@ -50,6 +52,8 @@ public class Ball : MonoBehaviour
     {
         brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
         levelGenerator = FindObjectOfType<LevelGenerator>();
+
+        
     }
 
 
@@ -103,11 +107,13 @@ public class Ball : MonoBehaviour
                 brickCount--;
                 score++;
                 scoreText.text = score.ToString("0000");
-                if(brickCount <= 0 && level == 1)
+                Debug.Log("Brick count: " + brickCount);
+                if (brickCount <= 0 && level == 1)
                 {
                     level = 2;
                     levelGenerator.CreateLevel();
-                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount - 1;
+                    Debug.Log("Brick count: " + brickCount);
                     transform.position = inicialPos;
                     body.velocity = Vector3.zero;
                     launched = false;
@@ -116,7 +122,8 @@ public class Ball : MonoBehaviour
                 {
                     level = 1;
                     levelGenerator.CreateLevel();
-                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount -1;
+                    Debug.Log("Brick count: " + brickCount);
                     transform.position = inicialPos;
                     body.velocity = Vector3.zero;
                     launched = false;
@@ -133,4 +140,6 @@ public class Ball : MonoBehaviour
 
         
     }
+
+    
 }

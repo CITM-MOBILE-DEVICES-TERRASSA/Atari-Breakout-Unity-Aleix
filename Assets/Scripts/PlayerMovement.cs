@@ -61,6 +61,15 @@ public class PlayerMovement : MonoBehaviour
                 velocity.x = 0; // Detener el movimiento horizontal si no se presiona ninguna tecla
             }
 
+            if (Input.GetMouseButton(0)) // 0 es el botón izquierdo del mouse
+            {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition); // Convertir la posición del mouse a coordenadas del mundo
+                Vector2 newPosition = new Vector2(mousePosition.x, rb.position.y); // Mantener la misma posición en y
+
+                // Mover el objeto hacia la nueva posición
+                rb.position = Vector2.Lerp(rb.position, newPosition, moveSpeed * Time.deltaTime);
+            }
+
             rb.velocity = velocity;
         }
         

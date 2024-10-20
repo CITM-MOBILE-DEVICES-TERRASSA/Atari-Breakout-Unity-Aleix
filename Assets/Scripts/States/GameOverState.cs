@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class GameOverState : GameState
 {
+    int finalScore;
 
+    public TextMeshProUGUI finalScoreText;
 
     public override void EnterState(GameManager gameManager)
     {
@@ -13,7 +17,16 @@ public class GameOverState : GameState
         gameManager.gameOverCanvas.SetActive(true);
 
         // Iniciar un retraso para reiniciar el juego
+        finalScore = gameManager.puntuacion;
 
+        //if (finalScoreText != null)
+        //{
+        //    finalScoreText.text = finalScore.ToString("0000");
+        //}
+        //else
+        //{
+        //    Debug.LogError("finalScoreText no está asignado.");
+        //}
 
         Time.timeScale = 0f;
 
@@ -21,6 +34,7 @@ public class GameOverState : GameState
 
     public override void UpdateState(GameManager gameManager)
     {
+        
         if (Input.GetKeyDown(KeyCode.Space))
         {
             gameManager.SwitchState(new GameplayState());

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,6 +20,12 @@ public class GameManager : MonoBehaviour
 
     public Button despause;
 
+    public int puntuacion = 0;
+
+    public int maxScore = 0;
+
+    public TextMeshProUGUI maxScoreText;
+
     private void Awake()
     {
         if (instance == null)
@@ -35,6 +42,12 @@ public class GameManager : MonoBehaviour
         currentState.EnterState(this);
 
 
+    }
+
+    private void Start()
+    {
+        LoadMaxScore();  // Cargar el maxScore al inicio del juego
+        UpdateMaxScoreText();  // Actualizar el texto para mostrar el maxScore
     }
 
     private void Update()
@@ -72,5 +85,15 @@ public class GameManager : MonoBehaviour
     public void Beggin()
     {
         SwitchState(new GameplayState());
+    }
+
+    void LoadMaxScore()
+    {
+        maxScore = PlayerPrefs.GetInt("MaxScore", 0);  // Cargar maxScore
+    }
+
+    void UpdateMaxScoreText()
+    {
+        maxScoreText.text = "Max Score: " + maxScore.ToString("0000");  // Actualiza el texto para mostrar el maxScore
     }
 }

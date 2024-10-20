@@ -24,8 +24,14 @@ public class GameplayState : GameState
         // Lógica de gameover (ejemplo)
         if (ball.lives <= 0)
         {
+            gameManager.maxScore = Ball.FindObjectOfType<Ball>().score;
+            PlayerPrefs.SetInt("MaxScore", gameManager.maxScore);
+            PlayerPrefs.Save();
             Debug.Log("GameOver");
+            GameManager.FindObjectOfType<GameManager>().puntuacion = Ball.FindObjectOfType<Ball>().score;
+            Debug.Log("punt count: " + GameManager.FindObjectOfType<GameManager>().puntuacion);
             gameManager.SwitchState(new GameOverState());
+            
             ball.lives = 3;
         }
     }
