@@ -2156,6 +2156,7 @@ MonoBehaviour:
   - {fileID: 65918263}
   - {fileID: 688994642}
   forceAmount: 10
+  level: 1
 --- !u!50 &1290011355
 Rigidbody2D:
   serializedVersion: 4
@@ -3042,7 +3043,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2036919757}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1518496297}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: RestartScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2036919757
 MonoBehaviour:
   m_ObjectHideFlags: 0
