@@ -7,15 +7,18 @@ public class Ball : MonoBehaviour
 {
     Rigidbody2D body;
     Vector2 launchDirection = new Vector2(0, 1); // Dirección hacia arriba
-    public float speed = 5f; // Velocidad de movimiento
+    public float speed; // Velocidad de movimiento
+
+    public float maxSpeed;
     bool launched;
 
     float minY = -5.10f;
 
-    public float maxVelocity = 10f;
+    
 
     int score = 0;
-    int lives = 3;
+
+    public int lives = 3;
 
     public TextMeshProUGUI scoreText;
 
@@ -25,19 +28,31 @@ public class Ball : MonoBehaviour
 
     public float forceAmount;
 
+    int brickCount;
+
+    public int level = 1;
+
+    private LevelGenerator levelGenerator;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         // El Rigidbody es cinemático
         launched = false;
 
-        
-
         inicialPos = body.position;
+
+        
 
     }
 
-    
+    private void Start()
+    {
+        brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+    }
+
+
 
     void Update()
     {
@@ -53,8 +68,11 @@ public class Ball : MonoBehaviour
         }
         else
         {
-
-            
+            if(speed >= maxSpeed)
+            {
+                speed = maxSpeed;
+            }
+            body.velocity = body.velocity.normalized * speed;
         }
 
         if(body.position.y < minY)
@@ -66,19 +84,51 @@ public class Ball : MonoBehaviour
             launched = false;
         }
 
-        if (body.velocity.magnitude > maxVelocity)
-        {
-            body.velocity = Vector3.ClampMagnitude(body.velocity, maxVelocity);
-        }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(speed < maxSpeed)
+        {
+            speed += 0.1f;
+        }
+        
         if (collision.gameObject.CompareTag("Brick"))
         {
-            Destroy(collision.gameObject);
-            score++;
-            scoreText.text = score.ToString("0000");
+            Brick brickScript = collision.gameObject.GetComponent<Brick>();
+            if (brickScript.lives == 1)
+            {
+                Destroy(collision.gameObject);
+                brickCount--;
+                score++;
+                scoreText.text = score.ToString("0000");
+                if(brickCount <= 0 && level == 1)
+                {
+                    level = 2;
+                    levelGenerator.CreateLevel();
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+                    transform.position = inicialPos;
+                    body.velocity = Vector3.zero;
+                    launched = false;
+                }
+                else if (brickCount <= 0 && level == 2)
+                {
+                    level = 1;
+                    levelGenerator.CreateLevel();
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+                    transform.position = inicialPos;
+                    body.velocity = Vector3.zero;
+                    launched = false;
+                }
+
+            }
+            else
+            {
+                brickScript.lives--;
+                brickScript.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            
         }
 
         
