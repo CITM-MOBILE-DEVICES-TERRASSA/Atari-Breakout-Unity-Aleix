@@ -28,20 +28,27 @@ public class GameOverState : GameState
         //    Debug.LogError("finalScoreText no está asignado.");
         //}
 
-        Time.timeScale = 0f;
+        
 
     }
+
+    private float elapsedTime = 0f; // Variable para almacenar el tiempo acumulado
 
     public override void UpdateState(GameManager gameManager)
     {
-        
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            gameManager.SwitchState(new GameplayState());
+        // Incrementa el tiempo acumulado
+        elapsedTime += Time.deltaTime;
 
+        // Si se presiona la barra espaciadora o han pasado 5 segundos
+        if (Input.GetKeyDown(KeyCode.Space) || elapsedTime >= 5f)
+        {
+
+            gameManager.RestartScene();
         }
+
         // No se necesita update, el juego se reinicia tras el retraso
     }
+
 
     public override void ExitState(GameManager gameManager)
     {
