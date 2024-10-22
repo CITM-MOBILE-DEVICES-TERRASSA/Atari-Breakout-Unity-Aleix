@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
     public float speed; // Velocidad de movimiento
 
     public float maxSpeed;
-    bool launched;
+    public bool launched;
 
     float minY = -5.10f;
 

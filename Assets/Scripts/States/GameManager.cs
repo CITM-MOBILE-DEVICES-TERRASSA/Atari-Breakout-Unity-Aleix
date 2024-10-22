@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    private GameState currentState;
+    public GameState currentState;
     public GameObject startCanvas;
     public GameObject pauseCanvas;
     public GameObject gameOverCanvas;
@@ -96,4 +96,6 @@ public class GameManager : MonoBehaviour
     {
         maxScoreText.text = "Max Score: " + maxScore.ToString("0000");  // Actualiza el texto para mostrar el maxScore
     }
+
+
 }

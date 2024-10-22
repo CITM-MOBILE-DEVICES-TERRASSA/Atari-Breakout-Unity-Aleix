@@ -68,9 +68,29 @@ public class PlayerMovement : MonoBehaviour
 
                 // Mover el objeto hacia la nueva posición
                 rb.position = Vector2.Lerp(rb.position, newPosition, moveSpeed * Time.deltaTime);
-            }
 
-            rb.velocity = velocity;
+                Vector3 newPositionn = ball.transform.position;
+                newPositionn.x = rb.position.x;
+                ball.transform.position = newPositionn;
+
+
+                
+
+                rb.velocity = velocity;
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                GameManager gameManager = FindObjectOfType<GameManager>();
+
+                if (!gameManager.startCanvas.activeSelf && !gameManager.gameOverCanvas.activeSelf && !gameManager.pauseCanvas.activeSelf)
+                {
+                    Debug.Log("launched");
+                    ball.launched = true;
+                }
+
+
+
+            }
         }
         
     }
