@@ -24,6 +24,8 @@ public class Ball : MonoBehaviour
 
     public TextMeshProUGUI scoreText;
 
+    public TextMeshProUGUI maxScoreHudText;
+
     public GameObject[] livesImage;
 
     Vector2 inicialPos;
@@ -36,15 +38,30 @@ public class Ball : MonoBehaviour
 
     private LevelGenerator levelGenerator;
 
+    public bool launchable;
+    bool isPressing = false;
+
+    GameManager gameManager;
+
+    public GameObject WinCanvas;
+
+      // Si estás usando físicas 2D
+    private Collider2D ballCollider;  // Referencia al collider de la bola
+    public bool isGhostMode = false;  // Modo atravesar objetos
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         // El Rigidbody es cinemático
         launched = false;
 
+        launchable = false;
+
         inicialPos = body.position;
 
         level = 1;
+
+        gameManager = FindObjectOfType<GameManager>();
 
     }
 
@@ -61,14 +78,31 @@ public class Ball : MonoBehaviour
     void Update()
     {
         // Si aún no se ha lanzado
+        if(launched)
+        {
+
+        }
         if (!launched)
         {
-            if (Input.GetKey(KeyCode.Space))
+            if (launchable == true)
             {
-                // Lanzamos la bola y cambiamos el estado a 'lanzado'
-                body.AddForce(Vector2.up * forceAmount, ForceMode2D.Impulse);
-                launched = true;
+              
+                 if(Input.GetMouseButtonUp(0) && isPressing)
+                {
+                    // Lanzamos la bola y cambiamos el estado a 'lanzado'
+                    body.AddForce(Vector2.up * forceAmount, ForceMode2D.Impulse);
+                    Debug.Log("launched");
+                    launched = true;
+                    isPressing = false;
+                }
+                    
+                
+                if (Input.GetMouseButtonDown(0))
+                {
+                    isPressing = true;
+                }
             }
+            
         }
         else
         {
@@ -107,9 +141,11 @@ public class Ball : MonoBehaviour
                 brickCount--;
                 score++;
                 scoreText.text = score.ToString("0000");
+                maxScoreHudText.text = gameManager.maxScore.ToString();
                 Debug.Log("Brick count: " + brickCount);
                 if (brickCount <= 0 && level == 1)
                 {
+                    StartCoroutine(ShowYouWinCanvas());
                     level = 2;
                     levelGenerator.CreateLevel();
                     brickCount = FindObjectOfType<LevelGenerator>().transform.childCount - 1;
@@ -120,6 +156,7 @@ public class Ball : MonoBehaviour
                 }
                 else if (brickCount <= 0 && level == 2)
                 {
+                    StartCoroutine(ShowYouWinCanvas());
                     level = 1;
                     levelGenerator.CreateLevel();
                     brickCount = FindObjectOfType<LevelGenerator>().transform.childCount -1;
@@ -141,5 +178,65 @@ public class Ball : MonoBehaviour
         
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Verificar si el objeto que entra en el trigger es un "Brick"
+        if (other.CompareTag("Brick"))
+        {
+            Brick brickScript = other.GetComponent<Brick>(); // Obtener el script del brick
+
+            if (brickScript.lives == 1)
+            {
+                Destroy(other.gameObject); // Destruir el brick
+                brickCount--;
+                score++;
+                scoreText.text = score.ToString("0000");
+                maxScoreHudText.text = gameManager.maxScore.ToString();
+                Debug.Log("Destruyendo brick, Brick count: " + brickCount);
+
+                // Lógica para cambiar de nivel
+                if (brickCount <= 0 && level == 1)
+                {
+                    StartCoroutine(ShowYouWinCanvas());
+                    level = 2;
+                    levelGenerator.CreateLevel();
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount - 1;
+                    Debug.Log("Brick count: " + brickCount);
+                    transform.position = inicialPos;
+                    body.velocity = Vector3.zero;
+                    launched = false;
+                }
+                else if (brickCount <= 0 && level == 2)
+                {
+                    StartCoroutine(ShowYouWinCanvas());
+                    level = 1;
+                    levelGenerator.CreateLevel();
+                    brickCount = FindObjectOfType<LevelGenerator>().transform.childCount - 1;
+                    Debug.Log("Brick count: " + brickCount);
+                    transform.position = inicialPos;
+                    body.velocity = Vector3.zero;
+                    launched = false;
+                }
+            }
+            else
+            {
+                // Reducir vidas si el brick aún tiene más de 1 vida
+                brickScript.lives--;
+                brickScript.GetComponent<SpriteRenderer>().color = Color.red; // Cambiar color
+            }
+        }
+        
+    }
+
+    IEnumerator ShowYouWinCanvas()
+    {
+        Debug.Log("win");
+        WinCanvas.SetActive(true);  // Activamos el canvas
+        yield return new WaitForSeconds(3);  // Esperamos 3 segundos
+        WinCanvas.SetActive(false);  // Desactivamos el canvas
+    }
+
     
+
+
 }

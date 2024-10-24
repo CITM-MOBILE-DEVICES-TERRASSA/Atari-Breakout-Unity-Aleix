@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class StartState : GameState
 {
     public Button start;
+    Ball ball;
     public override void EnterState(GameManager gameManager)
     {
         Debug.Log("Entering Start State");
@@ -13,6 +14,8 @@ public class StartState : GameState
         gameManager.startCanvas.SetActive(true);
         gameManager.pauseCanvas.SetActive(false);
         gameManager.gameOverCanvas.SetActive(false);
+        
+        
         Time.timeScale = 0f;
     }
 

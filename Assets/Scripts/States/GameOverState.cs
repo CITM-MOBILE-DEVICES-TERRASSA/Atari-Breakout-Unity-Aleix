@@ -42,7 +42,7 @@ public class GameOverState : GameState
         // Si se presiona la barra espaciadora o han pasado 5 segundos
         if (Input.GetKeyDown(KeyCode.Space) || elapsedTime >= 5f)
         {
-
+            gameManager.CheckAndUpdateMaxScore();
             gameManager.RestartScene();
         }
 

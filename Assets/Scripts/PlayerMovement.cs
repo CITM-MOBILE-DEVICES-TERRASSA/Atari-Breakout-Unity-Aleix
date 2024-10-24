@@ -25,10 +25,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector2 velocity = rb.velocity;
 
-        if(Input.GetKeyDown(KeyCode.M))
-        {
-            automatic = !automatic;
-        }
+        
 
         if(automatic)
         {
@@ -69,28 +66,32 @@ public class PlayerMovement : MonoBehaviour
                 // Mover el objeto hacia la nueva posición
                 rb.position = Vector2.Lerp(rb.position, newPosition, moveSpeed * Time.deltaTime);
 
-                Vector3 newPositionn = ball.transform.position;
-                newPositionn.x = rb.position.x;
-                ball.transform.position = newPositionn;
+                if(!ball.launched)
+                {
+                    Vector3 newPositionn = ball.transform.position;
+                    newPositionn.x = rb.position.x;
+                    ball.transform.position = newPositionn;
+                }
+                
 
 
                 
 
                 rb.velocity = velocity;
             }
-            if (Input.GetMouseButtonUp(0))
-            {
-                GameManager gameManager = FindObjectOfType<GameManager>();
+            //if (Input.GetMouseButtonUp(0))
+            //{
+            //    GameManager gameManager = FindObjectOfType<GameManager>();
 
-                if (!gameManager.startCanvas.activeSelf && !gameManager.gameOverCanvas.activeSelf && !gameManager.pauseCanvas.activeSelf)
-                {
-                    Debug.Log("launched");
-                    ball.launched = true;
-                }
+            //    if (!gameManager.startCanvas.activeSelf && !gameManager.gameOverCanvas.activeSelf && !gameManager.pauseCanvas.activeSelf)
+            //    {
+            //        Debug.Log("launched");
+                    
+            //    }
 
 
 
-            }
+            //}
         }
         
     }
@@ -102,5 +103,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
+    }
+
+    public void AutomaticSwitch()
+    {
+        
+            automatic = !automatic;
+        
     }
 }

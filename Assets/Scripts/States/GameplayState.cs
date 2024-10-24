@@ -12,6 +12,7 @@ public class GameplayState : GameState
         Debug.Log("Entering Gameplay State");
         Time.timeScale = 1f;
         ball = FindObjectOfType<Ball>();
+        ball.launchable = true;
     }
 
     public override void UpdateState(GameManager gameManager)
@@ -24,8 +25,8 @@ public class GameplayState : GameState
         // Lógica de gameover (ejemplo)
         if (ball.lives <= 0)
         {
-            gameManager.maxScore = Ball.FindObjectOfType<Ball>().score;
-            PlayerPrefs.SetInt("MaxScore", gameManager.maxScore);
+            
+            
             PlayerPrefs.Save();
             Debug.Log("GameOver");
             GameManager.FindObjectOfType<GameManager>().puntuacion = Ball.FindObjectOfType<Ball>().score;

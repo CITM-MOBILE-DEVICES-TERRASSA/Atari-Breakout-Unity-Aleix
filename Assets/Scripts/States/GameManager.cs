@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI maxScoreText;
 
+    Ball ball;
+
     private void Awake()
     {
         if (instance == null)
@@ -40,7 +42,7 @@ public class GameManager : MonoBehaviour
 
         currentState = new StartState();
         currentState.EnterState(this);
-
+        ball = FindObjectOfType<Ball>();
 
     }
 
@@ -85,6 +87,7 @@ public class GameManager : MonoBehaviour
     public void Beggin()
     {
         SwitchState(new GameplayState());
+        //ball.launchable = true;
     }
 
     void LoadMaxScore()
@@ -95,6 +98,17 @@ public class GameManager : MonoBehaviour
     void UpdateMaxScoreText()
     {
         maxScoreText.text = "Max Score: " + maxScore.ToString("0000");  // Actualiza el texto para mostrar el maxScore
+    }
+    public void CheckAndUpdateMaxScore()
+    {
+        // Si la puntuación actual es mayor que el maxScore, actualizamos el maxScore
+        if (ball.score > maxScore)
+        {
+            maxScore = ball.score;
+            PlayerPrefs.SetInt("MaxScore", maxScore);  // Guardar el nuevo maxScore
+            PlayerPrefs.Save();  // Asegurarse de que los cambios se guarden
+            UpdateMaxScoreText();  // Actualizar el texto para mostrar el nuevo maxScore
+        }
     }
 
 
