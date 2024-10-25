@@ -49,6 +49,12 @@ public class Ball : MonoBehaviour
     private Collider2D ballCollider;  // Referencia al collider de la bola
     public bool isGhostMode = false;  // Modo atravesar objetos
 
+    public GameObject ExperiencePointPrefab;
+
+    public int experiencePoints = 0;
+
+    RadialExperienceBar bar;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -62,6 +68,10 @@ public class Ball : MonoBehaviour
         level = 1;
 
         gameManager = FindObjectOfType<GameManager>();
+
+        ballCollider = GetComponent<Collider2D>();
+
+        bar = FindObjectOfType<RadialExperienceBar>();
 
     }
 
@@ -77,52 +87,67 @@ public class Ball : MonoBehaviour
 
     void Update()
     {
-        // Si aún no se ha lanzado
-        if(launched)
+        if (ballCollider.isTrigger == false)
         {
-
-        }
-        if (!launched)
-        {
-            if (launchable == true)
+            // Si aún no se ha lanzado
+            if (launched)
             {
-              
-                 if(Input.GetMouseButtonUp(0) && isPressing)
-                {
-                    // Lanzamos la bola y cambiamos el estado a 'lanzado'
-                    body.AddForce(Vector2.up * forceAmount, ForceMode2D.Impulse);
-                    Debug.Log("launched");
-                    launched = true;
-                    isPressing = false;
-                }
-                    
-                
-                if (Input.GetMouseButtonDown(0))
-                {
-                    isPressing = true;
-                }
+
             }
-            
+            if (!launched)
+            {
+                if (launchable == true)
+                {
+
+                    if (Input.GetMouseButtonUp(0) && isPressing)
+                    {
+                        // Lanzamos la bola y cambiamos el estado a 'lanzado'
+                        body.AddForce(Vector2.up * forceAmount, ForceMode2D.Impulse);
+                        Debug.Log("launched");
+                        launched = true;
+                        isPressing = false;
+                    }
+
+
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        isPressing = true;
+                    }
+                }
+
+            }
+            else
+            {
+                if (speed >= maxSpeed)
+                {
+                    speed = maxSpeed;
+                }
+                body.velocity = body.velocity.normalized * speed;
+            }
+
+            if (body.position.y < minY)
+            {
+                transform.position = inicialPos;
+                body.velocity = Vector3.zero;
+                lives--;
+                livesImage[lives].SetActive(false);
+                launched = false;
+            }
         }
         else
         {
-            if(speed >= maxSpeed)
-            {
-                speed = maxSpeed;
-            }
-            body.velocity = body.velocity.normalized * speed;
+            StartCoroutine(DisableTriggerAfterTime(7f));
         }
-
-        if(body.position.y < minY)
-        {
-            transform.position = inicialPos;
-            body.velocity = Vector3.zero;
-            lives--;
-            livesImage[lives].SetActive(false);
-            launched = false;
-        }
+        
 
         
+    }
+
+    private IEnumerator DisableTriggerAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time); // Espera el tiempo especificado
+        ballCollider.isTrigger = false; // Desactiva el trigger
+        Debug.Log("Trigger desactivado después de " + time + " segundos.");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -134,9 +159,13 @@ public class Ball : MonoBehaviour
         
         if (collision.gameObject.CompareTag("Brick"))
         {
+
             Brick brickScript = collision.gameObject.GetComponent<Brick>();
             if (brickScript.lives == 1)
             {
+                GameObject newExpiriencePoint = Instantiate(ExperiencePointPrefab);
+                newExpiriencePoint.transform.position = collision.gameObject.transform.position;
+                newExpiriencePoint.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.down * 1, ForceMode2D.Impulse);
                 Destroy(collision.gameObject);
                 brickCount--;
                 score++;
@@ -187,12 +216,16 @@ public class Ball : MonoBehaviour
 
             if (brickScript.lives == 1)
             {
+                GameObject newExpiriencePoint = Instantiate(ExperiencePointPrefab);
+                newExpiriencePoint.transform.position = other.gameObject.transform.position;
+                newExpiriencePoint.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.down * 1, ForceMode2D.Impulse);
+                Debug.Log("Instanciado punto de experiencia en: " + newExpiriencePoint.transform.position);
                 Destroy(other.gameObject); // Destruir el brick
                 brickCount--;
                 score++;
                 scoreText.text = score.ToString("0000");
                 maxScoreHudText.text = gameManager.maxScore.ToString();
-                Debug.Log("Destruyendo brick, Brick count: " + brickCount);
+                Debug.Log("Destruyendo brick trigger, Brick count: " + brickCount);
 
                 // Lógica para cambiar de nivel
                 if (brickCount <= 0 && level == 1)
@@ -225,7 +258,37 @@ public class Ball : MonoBehaviour
                 brickScript.GetComponent<SpriteRenderer>().color = Color.red; // Cambiar color
             }
         }
-        
+        if (other.CompareTag("Up") || other.CompareTag("Player"))
+        {
+            Vector2 incomingDirection = body.velocity; // Dirección actual de la bola
+            incomingDirection.y = -incomingDirection.y; // Invertir solo la componente y para rebote vertical
+            body.velocity = incomingDirection;
+
+            Debug.Log("Rebote en la pared superior con dirección: " + body.velocity);
+        }
+
+        // Lógica de rebote en 2D para los bordes laterales
+        if (other.CompareTag("Borders"))
+        {
+            Vector2 incomingDirection = body.velocity; // Dirección actual de la bola
+            Vector2 normal = (transform.position - other.transform.position).normalized; // Aproximación de la normal del borde
+
+            // Aquí asumimos que el borde izquierdo está a la izquierda de la bola y el borde derecho a la derecha
+            if (normal.x > 0) // Rebote en el borde izquierdo
+            {
+                incomingDirection.x = Mathf.Abs(incomingDirection.x); // Aseguramos que va hacia la derecha
+            }
+            else if (normal.x < 0) // Rebote en el borde derecho
+            {
+                incomingDirection.x = -Mathf.Abs(incomingDirection.x); // Aseguramos que va hacia la izquierda
+            }
+
+            // Aplicar la nueva dirección de rebote
+            body.velocity = incomingDirection;
+
+            Debug.Log("Rebote en borde lateral con dirección: " + body.velocity);
+        }
+
     }
 
     IEnumerator ShowYouWinCanvas()
@@ -234,6 +297,17 @@ public class Ball : MonoBehaviour
         WinCanvas.SetActive(true);  // Activamos el canvas
         yield return new WaitForSeconds(3);  // Esperamos 3 segundos
         WinCanvas.SetActive(false);  // Desactivamos el canvas
+    }
+
+    public void ActivateGhostMode()
+    {
+        if(bar.clickable)
+        {
+            Debug.Log("Ghost Mode");
+            ballCollider.isTrigger = true;
+            experiencePoints = 0;
+        }
+        
     }
 
     

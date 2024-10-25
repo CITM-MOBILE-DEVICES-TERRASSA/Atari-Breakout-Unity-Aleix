@@ -14,11 +14,14 @@ public class PlayerMovement : MonoBehaviour
 
     Ball ball;
 
+    RadialExperienceBar bar;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
         ball = FindObjectOfType<Ball>();
+
+        bar = FindObjectOfType<RadialExperienceBar>();
     }
 
     void Update()
@@ -105,6 +108,16 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("point"))
+        {
+            Destroy(other.gameObject);
+            ball.experiencePoints++;
+            bar.AddExperiencePoint();
+        }
+
+    }
     public void AutomaticSwitch()
     {
         

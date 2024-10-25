@@ -16,13 +16,13 @@ public class Brick : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isGhostMode)
-        {
+        //if(isGhostMode)
+        //{
 
-            brickCollider = GetComponent<Collider2D>();
-            brickCollider.isTrigger = isGhostMode;
-            //StartCoroutine(DisableGhostModeAfterTime(5f));
-        }
+        //    brickCollider = GetComponent<Collider2D>();
+        //    brickCollider.isTrigger = isGhostMode;
+        //    //StartCoroutine(DisableGhostModeAfterTime(5f));
+        //}
         //else
         //{
         //    brickCollider = GetComponent<Collider2D>();
@@ -30,22 +30,22 @@ public class Brick : MonoBehaviour
         //}
     }
 
-    public void ToggleGhostMode()
-    {
+    //public void ToggleGhostMode()
+    //{
         
-        isGhostMode = true;
-        Debug.Log("ghost");
+    //    isGhostMode = true;
+    //    Debug.Log("ghost");
         
-    }
+    //}
 
-    private IEnumerator DisableGhostModeAfterTime(float time)
-    {
-        yield return new WaitForSeconds(time); // Esperar el tiempo especificado
+    //private IEnumerator DisableGhostModeAfterTime(float time)
+    //{
+    //    yield return new WaitForSeconds(time); // Esperar el tiempo especificado
 
-        // Desactivar el modo fantasma
-        isGhostMode = false;
-        brickCollider.isTrigger = false;
-        Debug.Log("Modo Fantasma desactivado");
+    //    // Desactivar el modo fantasma
+    //    isGhostMode = false;
+    //    brickCollider.isTrigger = false;
+    //    Debug.Log("Modo Fantasma desactivado");
         
-    }
+    //}
 }

@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Brick
   - Ball
+  - point
+  - Borders
+  - Up
   layers:
   - Default
   - TransparentFX
