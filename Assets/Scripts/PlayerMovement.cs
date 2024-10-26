@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 public class PlayerMovement : MonoBehaviour
 {
     Rigidbody2D rb;
-    public float moveSpeed = 5f; // Velocidad del movimiento
+    public float moveSpeed = 10f; // Velocidad del movimiento
 
     bool automatic = false;
 

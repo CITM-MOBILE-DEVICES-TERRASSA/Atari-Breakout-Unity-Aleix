@@ -171,7 +171,7 @@ public class Ball : MonoBehaviour
                 GameObject newExpiriencePoint = Instantiate(ExperiencePointPrefab);
                 newExpiriencePoint.transform.position = collision.gameObject.transform.position;
                 newExpiriencePoint.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.down * 1, ForceMode2D.Impulse);
-                Destroy(collision.gameObject);
+                Destroy(collision.gameObject); 
                 brickCount--;
                 score++;
                 scoreText.text = score.ToString("0000");
