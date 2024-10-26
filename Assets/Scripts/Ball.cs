@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class Ball : MonoBehaviour
@@ -55,6 +56,8 @@ public class Ball : MonoBehaviour
 
     RadialExperienceBar bar;
 
+    public Button botonContinuar;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -79,8 +82,8 @@ public class Ball : MonoBehaviour
     {
         brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
         levelGenerator = FindObjectOfType<LevelGenerator>();
+        botonContinuar.interactable = PlayerPrefs.HasKey("UltimoNivel");
 
-        
     }
 
 
@@ -238,6 +241,8 @@ public class Ball : MonoBehaviour
                     transform.position = inicialPos;
                     body.velocity = Vector3.zero;
                     launched = false;
+
+                    GuardarPartida();
                 }
                 else if (brickCount <= 0 && level == 2)
                 {
@@ -249,6 +254,8 @@ public class Ball : MonoBehaviour
                     transform.position = inicialPos;
                     body.velocity = Vector3.zero;
                     launched = false;
+
+                    GuardarPartida();
                 }
             }
             else
@@ -310,7 +317,52 @@ public class Ball : MonoBehaviour
         
     }
 
-    
 
+    public void GuardarPartida()
+    {
+        PlayerPrefs.SetInt("MaximaPuntuacion", Mathf.Max(score, PlayerPrefs.GetInt("MaximaPuntuacion", 0)));
+        PlayerPrefs.SetInt("Vidas", lives);
+        PlayerPrefs.SetInt("UltimoNivel", level);
+        PlayerPrefs.SetInt("PuntosExperiencia", experiencePoints);
+        PlayerPrefs.Save();
+    }
+
+    private void CargarPartida()
+    {
+        // Cargar puntuación, vidas y nivel
+        score = PlayerPrefs.GetInt("MaximaPuntuacion", 0);
+        lives = PlayerPrefs.GetInt("Vidas", 3);
+        level = PlayerPrefs.GetInt("UltimoNivel", 1);
+        experiencePoints = PlayerPrefs.GetInt("PuntosExperiencia", 0);
+        bar.AddExperiencePoint();
+
+        // Actualiza el HUD
+        scoreText.text = score.ToString("0000");
+        maxScoreHudText.text = score.ToString("0000");
+
+        // Actualiza las vidas visibles
+        for (int i = 0; i < livesImage.Length; i++)
+        {
+            livesImage[i].SetActive(i < lives);
+        }
+
+        // Restaura la posición de la bola y el estado inicial
+        transform.position = inicialPos;
+        body.velocity = Vector3.zero;
+        launched = false;
+        launchable = true;
+
+        // Restablece el nivel y cuenta de bloques
+        levelGenerator = FindObjectOfType<LevelGenerator>();
+        levelGenerator.CreateLevel(); // Asegura que los bloques en el nivel actual se generen
+        brickCount = FindObjectOfType<LevelGenerator>().transform.childCount;
+    }
+
+    public void ContinuarPartida()
+    {
+        CargarPartida();
+        // Carga el primer nivel o el último en el que el jugador estuvo
+        FindObjectOfType<GameManager>().SwitchState(new GameplayState());  // Asegura el estado correcto
+    }
 
 }

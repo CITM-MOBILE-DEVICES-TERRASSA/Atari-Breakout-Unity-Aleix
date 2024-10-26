@@ -20,6 +20,7 @@ public class RadialExperienceBar : MonoBehaviour
     // Método para agregar experiencia
     public void AddExperiencePoint()
     {
+        maxPoints = 15;
         if (ball.experiencePoints <= maxPoints)
         {
             float fillPercentage = (float)ball.experiencePoints / maxPoints; // Calcula el porcentaje llenado

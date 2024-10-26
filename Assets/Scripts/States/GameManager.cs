@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     Ball ball;
 
+
     private void Awake()
     {
         if (instance == null)
@@ -97,7 +98,7 @@ public class GameManager : MonoBehaviour
 
     void UpdateMaxScoreText()
     {
-        maxScoreText.text = "Max Score: " + maxScore.ToString("0000");  // Actualiza el texto para mostrar el maxScore
+        maxScoreText.text = maxScore.ToString("0000");  // Actualiza el texto para mostrar el maxScore
     }
     public void CheckAndUpdateMaxScore()
     {
@@ -110,6 +111,29 @@ public class GameManager : MonoBehaviour
             UpdateMaxScoreText();  // Actualizar el texto para mostrar el nuevo maxScore
         }
     }
+
+    public void SalirDelJuego()
+    {
+
+        
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
+    public void SalirDelJuegoEnPausa()
+    {
+
+        ball.GuardarPartida();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
 
 
 }

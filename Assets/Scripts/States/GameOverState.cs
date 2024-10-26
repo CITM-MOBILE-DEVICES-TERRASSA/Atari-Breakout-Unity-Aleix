@@ -11,25 +11,32 @@ public class GameOverState : GameState
 
     public TextMeshProUGUI finalScoreText;
 
+    Ball ball;
+
     public override void EnterState(GameManager gameManager)
     {
         Debug.Log("Entering Game Over State");
         gameManager.gameOverCanvas.SetActive(true);
-
-        // Iniciar un retraso para reiniciar el juego
+        ball = FindObjectOfType<Ball>();
         finalScore = gameManager.puntuacion;
 
-        //if (finalScoreText != null)
-        //{
-        //    finalScoreText.text = finalScore.ToString("0000");
-        //}
-        //else
-        //{
-        //    Debug.LogError("finalScoreText no está asignado.");
-        //}
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = finalScore.ToString("0000");
+        }
 
-        
+        // Desactivar el botón de continuar y eliminar la partida guardada
+        Button botonContinuar = ball.botonContinuar;
+        if (botonContinuar != null)
+        {
+            botonContinuar.interactable = false;  // Desactiva el botón
+        }
 
+        // Eliminar los datos de la partida guardada
+        PlayerPrefs.DeleteKey("MaximaPuntuacion");
+        PlayerPrefs.DeleteKey("Vidas");
+        PlayerPrefs.DeleteKey("UltimoNivel");
+        PlayerPrefs.Save();
     }
 
     private float elapsedTime = 0f; // Variable para almacenar el tiempo acumulado
@@ -43,6 +50,7 @@ public class GameOverState : GameState
         if (Input.GetKeyDown(KeyCode.Space) || elapsedTime >= 5f)
         {
             gameManager.CheckAndUpdateMaxScore();
+            
             gameManager.RestartScene();
         }
 
