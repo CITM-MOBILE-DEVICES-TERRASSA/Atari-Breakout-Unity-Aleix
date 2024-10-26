@@ -112,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("point"))
         {
+            SoundManager.instance.PlayFx(SoundManager.instance.particleSound);
             Destroy(other.gameObject);
             ball.experiencePoints++;
             bar.AddExperiencePoint();

@@ -37,6 +37,8 @@ public class GameOverState : GameState
         PlayerPrefs.DeleteKey("Vidas");
         PlayerPrefs.DeleteKey("UltimoNivel");
         PlayerPrefs.Save();
+        SoundManager.instance.PlayFx(SoundManager.instance.hitSound);
+        SoundManager.instance.StopBackgroundMusic();
     }
 
     private float elapsedTime = 0f; // Variable para almacenar el tiempo acumulado

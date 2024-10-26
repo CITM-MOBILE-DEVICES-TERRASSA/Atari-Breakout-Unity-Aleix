@@ -109,6 +109,7 @@ public class Ball : MonoBehaviour
                         Debug.Log("launched");
                         launched = true;
                         isPressing = false;
+                        SoundManager.instance.PlayFx(SoundManager.instance.ballLaunch);
                     }
 
 
@@ -133,6 +134,7 @@ public class Ball : MonoBehaviour
                 transform.position = inicialPos;
                 body.velocity = Vector3.zero;
                 lives--;
+                SoundManager.instance.PlayFx(SoundManager.instance.loseLife);
                 livesImage[lives].SetActive(false);
                 launched = false;
             }
@@ -175,6 +177,7 @@ public class Ball : MonoBehaviour
                 scoreText.text = score.ToString("0000");
                 maxScoreHudText.text = gameManager.maxScore.ToString();
                 Debug.Log("Brick count: " + brickCount);
+                SoundManager.instance.PlayFx(SoundManager.instance.breaking);
                 if (brickCount <= 0 && level == 1)
                 {
                     StartCoroutine(ShowYouWinCanvas());
@@ -206,8 +209,9 @@ public class Ball : MonoBehaviour
             }
             
         }
+        SoundManager.instance.PlayFx(SoundManager.instance.ballBounce);
 
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -229,6 +233,7 @@ public class Ball : MonoBehaviour
                 scoreText.text = score.ToString("0000");
                 maxScoreHudText.text = gameManager.maxScore.ToString();
                 Debug.Log("Destruyendo brick trigger, Brick count: " + brickCount);
+                SoundManager.instance.PlayFx(SoundManager.instance.breaking);
 
                 // Lógica para cambiar de nivel
                 if (brickCount <= 0 && level == 1)
@@ -361,6 +366,7 @@ public class Ball : MonoBehaviour
     public void ContinuarPartida()
     {
         CargarPartida();
+        SoundManager.instance.StartBackgroundMusic();
         // Carga el primer nivel o el último en el que el jugador estuvo
         FindObjectOfType<GameManager>().SwitchState(new GameplayState());  // Asegura el estado correcto
     }

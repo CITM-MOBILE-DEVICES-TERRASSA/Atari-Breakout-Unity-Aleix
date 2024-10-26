@@ -88,6 +88,8 @@ public class GameManager : MonoBehaviour
     public void Beggin()
     {
         SwitchState(new GameplayState());
+        Debug.Log("Beggin");
+        SoundManager.instance.StartBackgroundMusic();
         //ball.launchable = true;
     }
 
@@ -112,10 +114,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     public void SalirDelJuego()
     {
 
-        
+        SoundManager.instance.PlayFx(SoundManager.instance.leave);
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -125,7 +128,7 @@ public class GameManager : MonoBehaviour
 
     public void SalirDelJuegoEnPausa()
     {
-
+        SoundManager.instance.PlayFx(SoundManager.instance.leave);
         ball.GuardarPartida();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
@@ -133,6 +136,8 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+
 
 
 
